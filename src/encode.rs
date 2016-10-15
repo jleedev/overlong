@@ -1,5 +1,9 @@
 // Cribbed from libcore/char.rs
 
+use std::error::Error;
+use std::fmt::Write;
+use std::str::FromStr;
+
 #[derive(Clone, Copy)]
 pub enum Mode {
     Normal,
@@ -8,6 +12,25 @@ pub enum Mode {
     MinTwo,
     MinThree,
     Four,
+}
+
+impl FromStr for Mode {
+    type Err = Box<Error>;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "Normal" => Ok(Mode::Normal),
+            "AddOne" => Ok(Mode::AddOne),
+            "AddTwo" => Ok(Mode::AddTwo),
+            "MinTwo" => Ok(Mode::MinTwo),
+            "MinThree" => Ok(Mode::MinThree),
+            "Four" => Ok(Mode::Four),
+            _ => {
+                let mut out = String::new();
+                write!(out, "invalid mode {:?}", s).unwrap();
+                Err(From::from(out))
+            }
+        }
+    }
 }
 
 // UTF-8 ranges and tags for encoding characters
